@@ -1,11 +1,11 @@
-import { Grid, GridColumn as Column, GridSortChangeEvent, GridEvent } from "@progress/kendo-react-grid";
-import { useState } from "react";
+import { Grid, GridColumn as Column, GridEvent } from "@progress/kendo-react-grid";
+import { useCallback, useEffect, useState } from "react";
 import { Loader } from "@progress/kendo-react-indicators";
 import { QueryClient, QueryClientProvider, useInfiniteQuery } from 'react-query';
 import '@progress/kendo-theme-default/dist/all.css';
 import './App.css'
 import { Pokemon, PokemonsResponse, getAllPokemons } from "./services/PokeService";
-import { SortDescriptor, orderBy } from "@progress/kendo-data-query";
+import { process } from "@progress/kendo-data-query";
 
 const queryClient = new QueryClient()
 
@@ -18,8 +18,12 @@ function App() {
 }
 
 function PokemonList() {
-  const [sort, setSort] = useState<SortDescriptor[]>([]);
   const [pokemons, setPokemons] = useState<Pokemon[]>([]);
+  const [isDataLoaded, setIsDataLoaded] = useState(false);
+  const [dataState, setDataState] = useState({});
+  const [resultState, setResultState] = useState(
+    process(pokemons, {})
+  );
 
   const {
     isLoading: isLoadingAllPokemons,
@@ -33,14 +37,23 @@ function PokemonList() {
     getNextPageParam: (lastPage) => lastPage.next,
   });
 
+  const onDataStateChange = useCallback((e) => {
+    setDataState(e.dataState);
+    setResultState(process(pokemons, e.dataState));
+  }, [pokemons]);
+
+  useEffect(() => {
+    if (dataAllPokemons && !isDataLoaded) {
+      setIsDataLoaded(true);
+      setPokemons(dataAllPokemons.pages[0].results);
+      setResultState(process(dataAllPokemons.pages[0].results, dataState))
+    }
+  }, [dataAllPokemons, isDataLoaded, dataState]);
+
   if (isLoadingAllPokemons) return <Loader size="large" type="pulsing" />;
   if (errorAllPokemons) return <p>Um erro aconteceu.</p>
 
-  if (dataAllPokemons) {  
-    const sortChange = (event: GridSortChangeEvent) => {
-      setSort(event.sort);
-    }
-
+  if (dataAllPokemons) {
     const scrollHandler = (event: GridEvent) => {
       const e = event.nativeEvent;
       if (
@@ -55,6 +68,7 @@ function PokemonList() {
           }, []);
 
           setPokemons(allResults);
+          setResultState(process(allResults, dataState));
         }
       }
     };
@@ -62,12 +76,13 @@ function PokemonList() {
     return (
       <Grid
         style={{ height: "400px" }}
-        data={orderBy(pokemons.length > 0 ? pokemons : dataAllPokemons.pages[0].results, sort)}
+        data={resultState.data}
         sortable={true}
-        sort={sort}
-        onSortChange={sortChange}
         onScroll={scrollHandler}
         fixedScroll={true}
+        filterable={true}
+        onDataStateChange={onDataStateChange}
+        {...dataState}
       >
         <Column field="name" title="Name" width="full" />
         <Column field="weight" title="Weight" />
