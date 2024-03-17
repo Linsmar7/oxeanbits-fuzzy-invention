@@ -2,7 +2,6 @@ export interface Pokemon {
   id: number;
   name: string;
   url: string;
-  expanded: boolean;
 }
 
 export interface PokemonsResponse {
