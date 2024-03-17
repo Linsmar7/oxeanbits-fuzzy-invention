@@ -1,6 +1,8 @@
 export interface Pokemon {
+  id: number;
   name: string;
   url: string;
+  expanded: boolean;
 }
 
 export interface PokemonsResponse {
@@ -8,6 +10,14 @@ export interface PokemonsResponse {
   next: string;
   previous: string;
   results: Pokemon[];
+}
+
+export interface Type {
+  slot: number;
+  type: {
+    name: string;
+    url: string;
+  }
 }
 
 /**
