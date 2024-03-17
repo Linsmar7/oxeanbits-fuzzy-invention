@@ -1,10 +1,10 @@
-import { Grid, GridColumn as Column, GridPageChangeEvent, GridSortChangeEvent, GridEvent } from "@progress/kendo-react-grid";
+import { Grid, GridColumn as Column, GridSortChangeEvent, GridEvent } from "@progress/kendo-react-grid";
 import { useState } from "react";
 import { Loader } from "@progress/kendo-react-indicators";
 import { QueryClient, QueryClientProvider, useInfiniteQuery } from 'react-query';
 import '@progress/kendo-theme-default/dist/all.css';
 import './App.css'
-import { Pokemon, getAllPokemons } from "./services/PokeService";
+import { Pokemon, PokemonsResponse, getAllPokemons } from "./services/PokeService";
 import { SortDescriptor, orderBy } from "@progress/kendo-data-query";
 
 const queryClient = new QueryClient()
@@ -18,27 +18,25 @@ function App() {
 }
 
 function PokemonList() {
-  const [page, setPage] = useState({
-    skip: 0,
-    take: 50,
-  });
   const [sort, setSort] = useState<SortDescriptor[]>([]);
   const [pokemons, setPokemons] = useState<Pokemon[]>([]);
 
-  const { isLoading, error, data, fetchNextPage, hasNextPage } = useInfiniteQuery({
-    queryKey: ['pokemons', page.skip],
+  const {
+    isLoading: isLoadingAllPokemons,
+    error: errorAllPokemons,
+    data: dataAllPokemons,
+    fetchNextPage,
+    hasNextPage
+  } = useInfiniteQuery<PokemonsResponse>({
+    queryKey: ['pokemons'],
     queryFn: getAllPokemons,
-    getNextPageParam: (lastPage, pages) => lastPage.next,
+    getNextPageParam: (lastPage) => lastPage.next,
   });
 
-  if (isLoading) return <Loader size="large" type="pulsing" />;
-  if (error) return <p>Um erro aconteceu.</p>
+  if (isLoadingAllPokemons) return <Loader size="large" type="pulsing" />;
+  if (errorAllPokemons) return <p>Um erro aconteceu.</p>
 
-  if (data) {
-    const pageChange = (event: GridPageChangeEvent) => {
-      setPage(event.page);
-    };
-  
+  if (dataAllPokemons) {  
     const sortChange = (event: GridSortChangeEvent) => {
       setSort(event.sort);
     }
@@ -51,7 +49,7 @@ function PokemonList() {
       ) {
         fetchNextPage();
         if (hasNextPage) {
-          const allResults = data.pages.reduce((acc, page) => {
+          const allResults = dataAllPokemons.pages.reduce((acc: Pokemon[], page) => {
             acc.push(...page.results);
             return acc;
           }, []);
@@ -64,9 +62,7 @@ function PokemonList() {
     return (
       <Grid
         style={{ height: "400px" }}
-        data={orderBy(pokemons.length > 0 ? pokemons : data.pages[0].results, sort)}
-        total={data.pages[0].count}
-        onPageChange={pageChange}
+        data={orderBy(pokemons.length > 0 ? pokemons : dataAllPokemons.pages[0].results, sort)}
         sortable={true}
         sort={sort}
         onSortChange={sortChange}
@@ -74,6 +70,7 @@ function PokemonList() {
         fixedScroll={true}
       >
         <Column field="name" title="Name" width="full" />
+        <Column field="weight" title="Weight" />
       </Grid>
     );
   }
