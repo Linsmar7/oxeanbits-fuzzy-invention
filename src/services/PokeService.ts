@@ -7,7 +7,7 @@ export interface Type {
 }
 
 // Types only what is being used.
-export interface Pokemon {
+interface Pokemon {
   id: number;
   name: string;
   url: string;
