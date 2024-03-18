@@ -1,7 +1,18 @@
+export interface Type {
+  slot: number;
+  type: {
+    name: string;
+    url: string;
+  }
+}
+
+// Types only what is being used.
 export interface Pokemon {
   id: number;
   name: string;
   url: string;
+  types: Type[];
+  sprites: Record<string, string>;
 }
 
 export interface PokemonsResponse {
@@ -9,14 +20,6 @@ export interface PokemonsResponse {
   next: string;
   previous: string;
   results: Pokemon[];
-}
-
-export interface Type {
-  slot: number;
-  type: {
-    name: string;
-    url: string;
-  }
 }
 
 /**

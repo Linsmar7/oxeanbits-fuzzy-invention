@@ -3,7 +3,7 @@ import { Pokemon, PokemonsResponse, Type, getAllPokemons } from "../../services/
 import { process } from "@progress/kendo-data-query";
 import { useInfiniteQuery } from "react-query";
 import { Loader } from "@progress/kendo-react-indicators";
-import { Grid, GridColumn, GridCustomCellProps, GridEvent } from "@progress/kendo-react-grid";
+import { Grid, GridColumn, GridCustomCellProps, GridDataStateChangeEvent, GridEvent } from "@progress/kendo-react-grid";
 import { PokemonName } from "../PokemonName";
 import '@progress/kendo-theme-default/dist/all.css';
 
@@ -27,7 +27,11 @@ export const PokemonList = () => {
     getNextPageParam: (lastPage) => lastPage.next,
   });
 
-  const onDataStateChange = useCallback((e) => {
+  // if (dataAllPokemons) {
+  //   console.log(dataAllPokemons.pages[0].results)
+  // }
+
+  const onDataStateChange = useCallback((e: GridDataStateChangeEvent) => {
     setDataState(e.dataState);
     setResultState(process(pokemons, e.dataState));
   }, [pokemons]);
@@ -85,6 +89,7 @@ export const PokemonList = () => {
 
     return (
       <Grid
+        style={{height: '800px'}}
         data={resultState.data}
         sortable={true}
         onScroll={scrollHandler}
