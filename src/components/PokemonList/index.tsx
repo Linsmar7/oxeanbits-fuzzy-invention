@@ -41,7 +41,7 @@ export const PokemonList = () => {
   }, [dataAllPokemons, isDataLoaded, dataState]);
 
   if (isLoadingAllPokemons) return <Loader size="large" type="pulsing" />;
-  if (errorAllPokemons) return <p>Um erro aconteceu.</p>
+  if (errorAllPokemons) return <p>An error occurred.</p>
 
   if (dataAllPokemons) {
     /**
@@ -85,7 +85,7 @@ export const PokemonList = () => {
 
     return (
       <Grid
-        style={{height: '800px'}}
+        style={{height: '600px', width: '90%'}}
         data={resultState.data}
         sortable={true}
         onScroll={scrollHandler}
