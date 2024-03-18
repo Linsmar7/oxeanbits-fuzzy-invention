@@ -27,10 +27,6 @@ export const PokemonList = () => {
     getNextPageParam: (lastPage) => lastPage.next,
   });
 
-  // if (dataAllPokemons) {
-  //   console.log(dataAllPokemons.pages[0].results)
-  // }
-
   const onDataStateChange = useCallback((e: GridDataStateChangeEvent) => {
     setDataState(e.dataState);
     setResultState(process(pokemons, e.dataState));
