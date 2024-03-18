@@ -5,7 +5,6 @@ import { useInfiniteQuery } from "react-query";
 import { Loader } from "@progress/kendo-react-indicators";
 import { Grid, GridColumn, GridCustomCellProps, GridEvent } from "@progress/kendo-react-grid";
 import { PokemonName } from "../PokemonName";
-import { useMediaQuery } from "../../services/MediaQueryService";
 import '@progress/kendo-theme-default/dist/all.css';
 
 export const PokemonList = () => {
@@ -29,8 +28,6 @@ export const PokemonList = () => {
     () => process(gridData, dataState),
     [dataState, gridData]
   );
-
-  const isLargeScreen = useMediaQuery('(min-width: 768px)')
 
   if (isLoadingAllPokemons) return <Loader size="large" type="pulsing" />;
   if (errorAllPokemons) return <p>An error occurred.</p>
@@ -77,10 +74,10 @@ export const PokemonList = () => {
         onDataStateChange={(e) => setDataState(e.dataState)}
         {...dataState}
       >
-        <GridColumn field="id" title="Entry" width={isLargeScreen ? '150px' : '100px'} />
-        <GridColumn field="name" title="Name" width={isLargeScreen ? '' : '150px'} cells={{data: PokemonName}}  />
-        <GridColumn field="types" title="Types" width={isLargeScreen ? '' : '150px'} cells={{data: typesCell}} filterable={false} />
-        <GridColumn field="weight" title="Weight (kg)" width={isLargeScreen ? '150px' : '100px'} filter="numeric" />
+        <GridColumn field="id" title="Entry" width="150px" filter="numeric" />
+        <GridColumn field="name" title="Name" width="300px" cells={{data: PokemonName}}  />
+        <GridColumn field="types" title="Types" width="200px" cells={{data: typesCell}} filterable={false} />
+        <GridColumn field="weight" title="Weight (kg)" width="150px" filter="numeric" />
       </Grid>
     );
   }
