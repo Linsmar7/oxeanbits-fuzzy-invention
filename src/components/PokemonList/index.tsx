@@ -72,12 +72,13 @@ export const PokemonList = () => {
         fixedScroll={true}
         filterable={true}
         onDataStateChange={(e) => setDataState(e.dataState)}
+        resizable={true}
         {...dataState}
       >
-        <GridColumn field="id" title="Entry" width="150px" filter="numeric" />
-        <GridColumn field="name" title="Name" width="300px" cells={{data: PokemonName}}  />
-        <GridColumn field="types" title="Types" width="200px" cells={{data: typesCell}} filterable={false} />
-        <GridColumn field="weight" title="Weight (kg)" width="150px" filter="numeric" />
+        <GridColumn field="id" title="Entry" filter="numeric" />
+        <GridColumn field="name" title="Name" cells={{data: PokemonName}}  />
+        <GridColumn field="types" title="Types" cells={{data: typesCell}} filterable={false} />
+        <GridColumn field="weight" title="Weight (kg)" filter="numeric" />
       </Grid>
     );
   }
