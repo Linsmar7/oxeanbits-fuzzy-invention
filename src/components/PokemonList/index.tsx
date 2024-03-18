@@ -95,8 +95,8 @@ export const PokemonList = () => {
         {...dataState}
       >
         <GridColumn field="id" title="Entry" width="150px" />
-        <GridColumn field="name" title="Name" width="full" cells={{data: PokemonName}}  />
-        <GridColumn field="types" title="Types" cells={{data: typesCell}} filterable={false} />
+        <GridColumn field="name" title="Name" width="200px" cells={{data: PokemonName}}  />
+        <GridColumn field="types" title="Types" width="200px" cells={{data: typesCell}} filterable={false} />
         <GridColumn field="weight" title="Weight (kg)" filter="numeric" width="200px" />
       </Grid>
     );
